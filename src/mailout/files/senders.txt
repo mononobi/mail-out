@@ -1,0 +1,5 @@
+sender_email_1@example.com[***]password_1
+sender_email_2@example.com[***]password_2
+sender_email_3@example.com[***]password_3
+sender_email_4@example.com[***]password_4
+sender_email_5@example.com[***]password_5

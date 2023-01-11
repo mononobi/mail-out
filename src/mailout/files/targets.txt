@@ -1,0 +1,8 @@
+target_email_1@example.com[***]target_name_1
+target_email_2@example.com[***]target_name_2
+target_email_3@example.com[***]target_name_3
+target_email_4@example.com[***]target_name_4
+target_email_5@example.com[***]target_name_5
+target_email_6@example.com[***]target_name_6
+target_email_7@example.com[***]target_name_7
+target_email_8@example.com[***]target_name_8
