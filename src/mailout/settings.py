@@ -40,4 +40,4 @@ SEP = '[***]'
 
 # sleep timeout in seconds between each request:
 
-SLEEP = 0.6
+SLEEP = 3

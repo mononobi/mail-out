@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from time import sleep
+from smtplib import SMTPServerDisconnected, SMTPSenderRefused, SMTPConnectError, SMTPDataError
 
 from mailout.client import Client
 from mailout.extractors.mail import MailExtractor
@@ -52,36 +53,68 @@ class Manager:
         print('Please review the files and try again.')
         exit(0)
 
+    def _renew(self, sender, current_client=None):
+        if current_client:
+            current_client.terminate()
+
+        client = self._get_client(sender['server'])
+        client.authenticate(sender['email'], sender['password'])
+        return client
+
     def perform(self):
         self._confirm()
         success_sent = 0
         failed_sent = 0
         failed_sender = 0
-        for sender in self._sender_extractor.senders:
+        client = None
+        for sender_index, sender in enumerate(self._sender_extractor.senders):
             try:
                 print('*' * 200)
-                print(f'Sending from sender [{sender["email"]}].')
-                client = self._get_client(sender['server'])
-                client.authenticate(sender['email'], sender['password'])
-                for target in self._target_extractor.targets:
+                print(f'Sending from sender [{sender_index + 1}]-[{sender["email"]}]')
+                client = self._renew(sender)
+                for target_index, target in enumerate(self._target_extractor.targets):
                     try:
-                        print(f'Sending to target [{target["name"]}]-[{target["email"]}]')
+                        print(f'Sending to target '
+                              f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]')
                         message = self._mail_extractor.message.format(name=target['name'])
                         client.send(target['email'], self._mail_extractor.subject, message)
                         success_sent += 1
                         sleep(SLEEP)
                     except Exception as target_error:
                         failed_sent += 1
-                        print(f'Error occurred on target [{target["email"]}]:')
+                        print(f'Error occurred on target '
+                              f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]:')
                         print(str(target_error))
+
+                        if isinstance(target_error, (SMTPServerDisconnected, SMTPSenderRefused)):
+                            print(f'Server [{sender["server"]}] is refusing the operation. '
+                                  f'Waiting for 90 seconds...')
+                            client.terminate()
+                            sleep(90)
+                            client = self._renew(sender, client)
+
+                        if isinstance(target_error, SMTPDataError):
+                            print(f'Your daily quota limit has been reached '
+                                  f'for server [{sender["server"]}]')
+                            print('Exiting...')
+                            exit(0)
+
                         continue
 
                 client.terminate()
 
             except Exception as sender_error:
                 failed_sender += 1
-                print(f'Error occurred on sender [{sender["email"]}]:')
+                print(f'Error occurred on sender [{sender_index + 1}]-[{sender["email"]}]:')
                 print(str(sender_error))
+
+                if isinstance(sender_error, SMTPConnectError):
+                    print(f'Server [{sender["server"]}] has blocked the connection. '
+                          f'Waiting for 90 seconds...')
+
+                    client.terminate()
+                    sleep(90)
+                    client = self._renew(sender, client)
                 continue
 
         print('*' * 200)
