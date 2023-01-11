@@ -6,6 +6,7 @@ from smtplib import SMTPServerDisconnected, SMTPSenderRefused, SMTPConnectError,
 from mailout.client import Client
 from mailout.extractors.mail import MailExtractor
 from mailout.extractors.senders import SenderExtractor
+from mailout.extractors.sent import SentExtractor
 from mailout.extractors.targets import TargetExtractor
 from mailout.settings import SERVERS, SLEEP
 
@@ -17,6 +18,7 @@ class Manager:
         self._mail_extractor = MailExtractor()
         self._sender_extractor = SenderExtractor()
         self._target_extractor = TargetExtractor()
+        self._sent_extractor = SentExtractor()
 
     def _get_client(self, server_name):
         server = SERVERS.get(server_name.lower())
@@ -45,6 +47,8 @@ class Manager:
         print('*' * 100)
         print('Targets Count:')
         print(len(self._target_extractor.targets))
+        if self._sent_extractor.has_any():
+            print('There is a "sent.txt" file available, so some targets might be ignored.')
 
         response = input('Do you confirm these information? [Y/n]\n')
         if response.strip().lower() in ('', 'y'):
@@ -66,6 +70,7 @@ class Manager:
         success_sent = 0
         failed_sent = 0
         failed_sender = 0
+        ignored_count = 0
         client = None
         for sender_index, sender in enumerate(self._sender_extractor.senders):
             try:
@@ -74,11 +79,18 @@ class Manager:
                 client = self._renew(sender)
                 for target_index, target in enumerate(self._target_extractor.targets):
                     try:
+                        if self._sent_extractor.is_sent(sender['email'], target['email']):
+                            print(f'Ignoring target '
+                                  f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]')
+                            ignored_count += 1
+                            continue
+
                         print(f'Sending to target '
                               f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]')
                         message = self._mail_extractor.message.format(name=target['name'])
                         client.send(target['email'], self._mail_extractor.subject, message)
                         success_sent += 1
+                        self._sent_extractor.add_sent(sender['email'], target['email'])
                         sleep(SLEEP)
                     except Exception as target_error:
                         failed_sent += 1
@@ -97,6 +109,8 @@ class Manager:
                             print(f'Your daily quota limit has been reached '
                                   f'for server [{sender["server"]}]')
                             print('Exiting...')
+                            self.print_summary(success_sent, failed_sent,
+                                               ignored_count, failed_sender)
                             exit(0)
 
                         continue
@@ -117,8 +131,12 @@ class Manager:
                     client = self._renew(sender, client)
                 continue
 
+        self.print_summary(success_sent, failed_sent, ignored_count, failed_sender)
+
+    def print_summary(self, success_sent, failed_sent, ignored_count, failed_sender):
         print('*' * 200)
-        print(f'Operation finished:')
+        print('Operation finished:')
         print(f'Emails Sent: {success_sent}')
         print(f'Emails Failed: {failed_sent}')
+        print(f'Ignored Targets Count: {ignored_count}')
         print(f'Failed Senders Count: {failed_sender}')
