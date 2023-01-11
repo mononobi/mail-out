@@ -28,6 +28,7 @@ class Client:
         msg = EmailMessage()
         msg.set_content(message)
         msg['Subject'] = subject
+        msg['To'] = target_address
         self._client.send_message(msg, self._sender_address, target_address)
 
     def terminate(self):
