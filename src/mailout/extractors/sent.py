@@ -38,7 +38,7 @@ class SentExtractor(BaseExtractor):
         self._add_sent(sender, target, self._sent)
 
         with open(self.file_path, mode='a') as file:
-            file.write(f'{sender.lower()}{SEP}{target}\n')
+            file.write(f'{sender.lower()}{SEP}{target.lower()}\n')
 
     def is_sent(self, sender, target):
         current_items = self._sent.get(sender.lower(), set())
