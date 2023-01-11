@@ -13,20 +13,24 @@ class Client:
         self._is_connected = True
         self._sender_address = None
 
-    def authenticate(self, sender_address, sender_pass):
+    def _validate(self):
         if not self._is_connected:
-            self._client.connect(self._host, self._port)
+            raise Exception('Current smtp client is not connected anymore.')
 
+    def authenticate(self, sender_address, sender_pass):
+        self._validate()
         self._client.starttls()
         self._client.login(sender_address, sender_pass)
         self._sender_address = sender_address
 
     def send(self, target_address, subject, message):
+        self._validate()
         msg = EmailMessage()
         msg.set_content(message)
         msg['Subject'] = subject
         self._client.send_message(msg, self._sender_address, target_address)
 
     def terminate(self):
+        self._validate()
         self._is_connected = False
         self._client.quit()

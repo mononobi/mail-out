@@ -6,23 +6,26 @@ from mailout.client import Client
 from mailout.extractors.mail import MailExtractor
 from mailout.extractors.senders import SenderExtractor
 from mailout.extractors.targets import TargetExtractor
-from mailout.settings import SERVERS
+from mailout.settings import SERVERS, SLEEP
 
 
 class Manager:
-    def __init__(self, server_name):
+    def __init__(self):
         print('*' * 200)
         print('Processing data...')
         self._mail_extractor = MailExtractor()
         self._sender_extractor = SenderExtractor()
         self._target_extractor = TargetExtractor()
-        self._server = SERVERS.get(server_name.lower())
-        if not self._server:
-            raise Exception(f'Server configs for [{server_name}] is not available in settings.')
 
-        self._client = Client(self._server['host'], self._server['port'])
+    def _get_client(self, server_name):
+        server = SERVERS.get(server_name.lower())
+        if not server:
+            raise Exception(f'Server [{server_name}] does not have any '
+                            f'configurations in settings.')
 
-    def validate(self):
+        return Client(server['host'], server['port'])
+
+    def _confirm(self):
         message = self._mail_extractor.message.format(name='TARGET NAME')
         print('*' * 200)
         print('You are going to send emails, please confirm these information:')
@@ -50,7 +53,7 @@ class Manager:
         exit(0)
 
     def perform(self):
-        self.validate()
+        self._confirm()
         success_sent = 0
         failed_sent = 0
         failed_sender = 0
@@ -58,21 +61,22 @@ class Manager:
             try:
                 print('*' * 200)
                 print(f'Sending from sender [{sender["email"]}].')
-                self._client.authenticate(sender['email'], sender['password'])
+                client = self._get_client(sender['server'])
+                client.authenticate(sender['email'], sender['password'])
                 for target in self._target_extractor.targets:
                     try:
                         print(f'Sending to target [{target["name"]}]-[{target["email"]}]')
                         message = self._mail_extractor.message.format(name=target['name'])
-                        self._client.send(target['email'], self._mail_extractor.subject, message)
+                        client.send(target['email'], self._mail_extractor.subject, message)
                         success_sent += 1
-                        sleep(self._server.get('sleep', 0.01))
+                        sleep(SLEEP)
                     except Exception as target_error:
                         failed_sent += 1
                         print(f'Error occurred on target [{target["email"]}]:')
                         print(str(target_error))
                         continue
 
-                self._client.terminate()
+                client.terminate()
 
             except Exception as sender_error:
                 failed_sender += 1

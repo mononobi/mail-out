@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mailout.extractors.base import BaseExtractor
+from mailout.settings import SERVERS, SEP
 
 
 class SenderExtractor(BaseExtractor):
@@ -14,9 +15,10 @@ class SenderExtractor(BaseExtractor):
         with open(self.file_path) as file:
             data = file.readlines()
             for item in data:
-                parts = item.split('[***]')
+                parts = item.split(SEP)
                 if len(parts) != 2:
-                    print(f'Invalid sender data found: {item.rstrip()}')
+                    if item.rstrip() != '':
+                        print(f'Invalid sender data found: {item.rstrip()}')
                     continue
 
                 email = parts[0].rstrip()
@@ -33,8 +35,19 @@ class SenderExtractor(BaseExtractor):
                     print(f'Sender address [{email}] is duplicate.')
                     continue
 
+                email_parts = email.split('@')
+                if len(email_parts) != 2:
+                    print(f'Invalid sender email found: [{email}]')
+                    continue
+
+                server = email_parts[1]
+                if server.lower() not in SERVERS:
+                    print(f'Server [{server}] does not have any '
+                          f'configurations in settings.')
+                    continue
+
                 added.append(email.lower())
-                senders.append(dict(email=email, password=password))
+                senders.append(dict(email=email, password=password, server=server.lower()))
 
         if not senders:
             raise Exception('No valid senders found.')

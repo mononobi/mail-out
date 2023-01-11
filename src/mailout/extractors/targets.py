@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mailout.extractors.base import BaseExtractor
+from mailout.settings import SEP
 
 
 class TargetExtractor(BaseExtractor):
@@ -14,9 +15,10 @@ class TargetExtractor(BaseExtractor):
         with open(self.file_path) as file:
             data = file.readlines()
             for item in data:
-                parts = item.split('[***]')
+                parts = item.split(SEP)
                 if len(parts) != 2:
-                    print(f'Invalid target data found: {item.rstrip()}')
+                    if item.rstrip() != '':
+                        print(f'Invalid target data found: {item.rstrip()}')
                     continue
 
                 email = parts[0].rstrip()

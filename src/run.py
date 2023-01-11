@@ -3,7 +3,7 @@
 from mailout.manager import Manager
 
 
-manager = Manager('gmail')
+manager = Manager()
 
 if __name__ == '__main__':
     manager.perform()
