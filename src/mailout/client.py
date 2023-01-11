@@ -26,6 +26,7 @@ class Client:
     def send(self, target_address, subject, message):
         self._validate()
         msg = EmailMessage()
+        msg.set_charset('utf-8')
         msg.set_content(message)
         msg['Subject'] = subject
         msg['To'] = target_address
