@@ -15,16 +15,20 @@ class MailExtractor(BaseExtractor):
                 raise Exception('Invalid email structure found.')
 
             subject = data[0].rstrip()
-            message_data = data[1:]
+            fromname = data[1].rstrip()
+            message_data = data[2:]
             message = ''.join(message_data).strip()
 
             if not subject or subject.isspace():
                 raise Exception('Invalid email subject found.')
 
+            if not fromname or fromname.isspace():
+                raise Exception('Invalid from name found.')
+
             if not message or message.isspace():
                 raise Exception('Invalid email message found.')
-
-        return dict(subject=subject, message=message)
+                
+        return dict(subject=subject, fromname=fromname, message=message)
 
     @property
     def message(self):
@@ -33,3 +37,7 @@ class MailExtractor(BaseExtractor):
     @property
     def subject(self):
         return self._email['subject']
+
+    @property
+    def fromname(self):
+        return self._email['fromname']
