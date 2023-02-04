@@ -36,6 +36,9 @@ class Manager:
         print('Email Subject:')
         print(self._mail_extractor.subject)
         print('*' * 100)
+        print('From Name:')
+        print(self._mail_extractor.fromname)
+        print('*' * 100)
         print('Email Message:')
         print(message)
         print('*' * 100)
@@ -88,7 +91,8 @@ class Manager:
                         print(f'Sending to target '
                               f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]')
                         message = self._mail_extractor.message.format(name=target['name'])
-                        client.send(target['email'], self._mail_extractor.subject, message)
+                        
+                        client.send(target['email'], self._mail_extractor.subject, self._mail_extractor.fromname, message)
                         success_sent += 1
                         self._sent_extractor.add_sent(sender['email'], target['email'])
                         sleep(SLEEP)
