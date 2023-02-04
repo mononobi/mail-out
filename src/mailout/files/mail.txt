@@ -1,8 +1,4 @@
-Email Subject Goes Here
+Subject Always Here
+From Name Goes Here
 
-Email message to {name} goes here.
-
-It could have as many lines as you want with empty lines in between.
-Only the first line of this file will be considered as subject.
-
-Have a nice day
+<font color="red">red color text</font>
