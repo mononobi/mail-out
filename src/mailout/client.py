@@ -17,12 +17,14 @@ class Client:
         self._client.login(sender_address, sender_pass)
         self._sender_address = sender_address
 
-    def send(self, target_address, subject, message):
+    def send(self, target_address, subject, fromname, message):
         msg = EmailMessage()
         msg.set_charset('utf-8')
         msg.set_content(message)
         msg['Subject'] = subject
+        msg['From'] = fromname
         msg['To'] = target_address
+        msg.set_content(message, subtype='html')
         self._client.send_message(msg, self._sender_address, target_address)
 
     def terminate(self):
