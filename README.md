@@ -3,13 +3,22 @@ A simple command line client for sending emails using different email providers.
 
 # data
 You should first fill these three files with real data and then run the app:
-- **files/mail.txt**: Contains the subject and body of the email to be sent. 
-  it could have a `{name}` placeholder to be replaced by each target name at runtime.
-- **files/senders.txt**: Contains the email address and password of each email to be used 
-  as source address. If more than one sender is provided, the email would be sent from 
-  each sender to all targets.
+- **files/mail.txt**: Contains the body type, subject and body of the email to be sent. 
+  it could have `{target_name}` and/or `{sender_name}` placeholders to be replaced by 
+  each target and sender name at runtime.
+
+  the body type is the first line of the file and could be either `<<-text->>` or `<<-html->>`.
+- **files/senders.txt**: Contains the email address, password and optional sender name of each 
+  email to be used as source address. If more than one sender is provided, the email would be 
+  sent from each sender to all targets.
+  The provided sender name would be replaced in email subject and message if there is a
+  `{sender_name}` placeholder. 
+
+  Note that if you don't want to provide `sender_name` in this file, you shouldn't also 
+  add `{sender_name}` placeholder in `mail.txt` file. otherwise an error would be raised.
 - **files/targets.txt**: Contains the email address and name of each target to send email to it.
-  the provided name would be replaced in email message if there is a `{name}` placeholder.
+  the provided target name would be replaced in email subject and message if there is a 
+  `{target_name}` placeholder.
 
 # servers
 The app can connect to any smtp server which supports tls. 
@@ -23,6 +32,7 @@ The app will use the correct configuration for each sender email address.
 
 # features
 - Sending emails from single/multiple senders to single/multiple targets.
+- Supporting text or html email body.
 - Circumventing the email servers rate limiting.
 - Performing a single operation multiple times and only sending emails to those 
   targets which have been failed in previous operations without sending a duplicate 
