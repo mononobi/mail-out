@@ -19,4 +19,4 @@ class BodyTypeEnum(Enum):
         :rtype: list[str]
         """
 
-        return cls.TEXT, cls.HTML
+        return cls.TEXT.value, cls.HTML.value
