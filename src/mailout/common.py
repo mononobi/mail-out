@@ -10,3 +10,13 @@ class BodyTypeEnum(Enum):
 
     TEXT = '<<-text->>'
     HTML = '<<-html->>'
+
+    @classmethod
+    def accepted_types(cls):
+        """
+        gets a list of all accepted body types.
+
+        :rtype: list[str]
+        """
+
+        return cls.TEXT, cls.HTML

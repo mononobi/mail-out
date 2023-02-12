@@ -35,7 +35,7 @@ class MailExtractor(BaseExtractor):
         if not body_type or body_type.isspace():
             raise ValueError('Invalid email body type found.')
 
-        if body_type not in BodyTypeEnum:
+        if body_type not in BodyTypeEnum.accepted_types():
             raise ValueError(f'Invalid email body type found: [{body_type}]')
 
         if not subject or subject.isspace():
