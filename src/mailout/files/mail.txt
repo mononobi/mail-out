@@ -15,4 +15,9 @@ Message body could have as many lines as you want with empty lines in between.
   Message body could also have {target_name} and/or {sender_name} placeholders
   to be replaced at runtime.
 
+**NOTE**
+if you haven't provided `sender_name` in `senders.txt` file, you should not
+provide {sender_name} placeholder in this file too, otherwise an error would
+be raised.
+
 Have a nice day

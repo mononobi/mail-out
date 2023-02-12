@@ -49,6 +49,7 @@ class SenderExtractor(BaseExtractor):
 
             if name is not None and (not name or name.isspace()):
                 print(f'Invalid sender name found: {item.rstrip()}')
+                continue
 
             if email.lower() in added:
                 print(f'Sender address [{email}] is duplicate.')

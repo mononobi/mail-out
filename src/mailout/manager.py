@@ -102,6 +102,26 @@ class Manager:
         client.authenticate(sender['email'], sender['password'])
         return client
 
+    def _fill_names(self, text, sender_name, target_name):
+        """
+        fills the sender and target name placeholders in given text.
+
+        :param str text: text to replace its placeholders.
+        :param str sender_name: sender name.
+        :param str target_name: target name.
+
+        :rtype: str
+        """
+
+        data = {}
+        if sender_name:
+            data.update(sender_name=sender_name)
+
+        if target_name:
+            data.update(target_name=target_name)
+
+        return text.format(**data)
+
     def perform(self):
         """
         performs the email sending operation.
@@ -128,10 +148,11 @@ class Manager:
 
                         print(f'Sending to target '
                               f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]')
-                        message = self._mail_extractor.message.format(target_name=target['name'],
-                                                                      sender_name=sender['name'])
-                        subject = self._mail_extractor.subject.format(target_name=target['name'],
-                                                                      sender_name=sender['name'])
+
+                        message = self._fill_names(self._mail_extractor.message,
+                                                   sender['name'], target['name'])
+                        subject = self._fill_names(self._mail_extractor.subject,
+                                                   sender['name'], target['name'])
                         client.send(target['email'], subject, message,
                                     self._mail_extractor.body_type,
                                     target['name'], sender['name'])
