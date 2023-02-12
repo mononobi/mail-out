@@ -1,6 +1,18 @@
 # mail-out
 A simple command line client for sending emails using different email providers.
 
+# features
+- Sending emails from single/multiple senders to single/multiple targets.
+- Supporting text or html email body.
+- Circumventing the email servers rate limiting.
+- Performing a single operation multiple times and only sending emails to those
+  targets which have been failed in previous operations without sending a duplicate
+  email from any sender to any target.
+- Detailed log output during each operation.
+- Adding support for any email provider just by adding its respective configs.
+- Sending emails from senders with different email providers in a single operation.
+- Automatically removing duplicate senders or targets.
+
 # data
 You should first fill these three files with real data and then run the app:
 - **files/mail.txt**: Contains the body type, subject and body of the email to be sent. 
@@ -30,17 +42,15 @@ The already available configurations support these email services:
 You can add any other server configurations into `SERVERS` variable of `settings` module.
 The app will use the correct configuration for each sender email address.
 
-# features
-- Sending emails from single/multiple senders to single/multiple targets.
-- Supporting text or html email body.
-- Circumventing the email servers rate limiting.
-- Performing a single operation multiple times and only sending emails to those 
-  targets which have been failed in previous operations without sending a duplicate 
-  email from any sender to any target.
-- Detailed log output during each operation.
-- Adding support for any email provider just by adding its respective configs.
-- Sending emails from senders with different email providers in a single operation.
-- Automatically removing duplicate senders or targets.
-
 # run
 python3 run.py
+
+# two-step verification note
+If your email account has two-step verification enabled, you should create an app password
+for your account and use that app password in `senders.txt` file instead of your account's 
+main password.
+Here are the links for Google and Microsoft accounts app password guide, any other email 
+provider would also have something similar to app passwords:
+
+- [Google App Passwords](https://support.google.com/accounts/answer/185833?hl=en)
+- [Microsoft App Passwords](https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944)
