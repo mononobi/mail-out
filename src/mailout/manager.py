@@ -133,7 +133,8 @@ class Manager:
                         subject = self._mail_extractor.subject.format(target_name=target['name'],
                                                                       sender_name=sender['name'])
                         client.send(target['email'], subject, message,
-                                    self._mail_extractor.body_type, sender['name'])
+                                    self._mail_extractor.body_type,
+                                    target['name'], sender['name'])
                         success_sent += 1
                         self._sent_extractor.add_sent(sender['email'], target['email'])
                         sleep(SLEEP)

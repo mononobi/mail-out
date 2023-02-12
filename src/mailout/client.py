@@ -39,7 +39,8 @@ class Client:
         self._client.login(sender_address, sender_pass)
         self._sender_address = sender_address
 
-    def send(self, target_address, subject, message, body_type, sender_name=None):
+    def send(self, target_address, subject, message,
+             body_type, target_name=None, sender_name=None):
         """
         sends an email to the provided target address.
 
@@ -48,6 +49,7 @@ class Client:
         :param str message: email message to be sent.
         :param str body_type: email body type to be sent.
                               it could be `<<-text->>` or `<<-html->>`.
+        :param str target_name: target name to be added to email metadata if provided.
         :param str sender_name: sender name to be added to email metadata if provided.
         """
 
@@ -59,9 +61,16 @@ class Client:
 
         msg.set_content(message, **subtype)
         msg['Subject'] = subject
-        msg['To'] = target_address
+
+        if target_name:
+            msg['To'] = f'{target_name} <{target_address}>'
+        else:
+            msg['To'] = target_address
+
         if sender_name:
-            msg['From'] = sender_name
+            msg['From'] = f'{sender_name} <{self._sender_address}>'
+        else:
+            msg['From'] = self._sender_address
 
         self._client.send_message(msg, self._sender_address, target_address)
 
