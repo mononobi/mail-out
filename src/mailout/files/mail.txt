@@ -1,8 +1,18 @@
-Email Subject Goes Here
+<<-text->>
+Email Subject From {sender_name} Goes Here
 
-Email message to {name} goes here.
+Email message to {target_name} goes here.
 
-It could have as many lines as you want with empty lines in between.
-Only the first line of this file will be considered as subject.
+Message body could have as many lines as you want with empty lines in between.
+
+- The first line of this file would be used to detect message body type.
+  + If it's a pure text, you should leave it as <<-text->>
+  + If it's an HTML body, you should set it to <<-html->>
+- The second line of this file would be considered as subject.
+  Subject could have {target_name} and/or {sender_name} placeholders
+  to be replaced at runtime.
+- The rest of the file would be considered as message body.
+  Message body could also have {target_name} and/or {sender_name} placeholders
+  to be replaced at runtime.
 
 Have a nice day

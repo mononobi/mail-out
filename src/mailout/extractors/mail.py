@@ -1,35 +1,77 @@
 # -*- coding: utf-8 -*-
 
+from mailout.common import BodyTypeEnum
 from mailout.extractors.base import BaseExtractor
 
 
 class MailExtractor(BaseExtractor):
+    """
+    mail extractor class.
+    """
+
     def __init__(self):
+        """
+        initializes an instance of `MailExtractor`.
+        """
+
         super().__init__('mail.txt')
         self._email = self._extract_email()
 
     def _extract_email(self):
-        with open(self.file_path) as file:
-            data = file.readlines()
-            if len(data) < 2:
-                raise Exception('Invalid email structure found.')
+        """
+        extracts email subject and body.
 
-            subject = data[0].rstrip()
-            message_data = data[1:]
-            message = ''.join(message_data).strip()
+        :rtype: dict
+        """
 
-            if not subject or subject.isspace():
-                raise Exception('Invalid email subject found.')
+        if len(self.file_lines) < 3:
+            raise ValueError('Invalid email structure found.')
 
-            if not message or message.isspace():
-                raise Exception('Invalid email message found.')
+        body_type = self.file_lines[0].rstrip()
+        subject = self.file_lines[1].rstrip()
+        message_data = self.file_lines[2:]
+        message = ''.join(message_data).strip()
 
-        return dict(subject=subject, message=message)
+        if not body_type or body_type.isspace():
+            raise ValueError('Invalid email body type found.')
+
+        if body_type not in BodyTypeEnum:
+            raise ValueError(f'Invalid email body type found: [{body_type}]')
+
+        if not subject or subject.isspace():
+            raise ValueError('Invalid email subject found.')
+
+        if not message or message.isspace():
+            raise ValueError('Invalid email message found.')
+
+        return dict(subject=subject, message=message, body_type=body_type)
 
     @property
     def message(self):
+        """
+        gets the email body.
+
+        :rtype: str
+        """
+
         return self._email['message']
 
     @property
     def subject(self):
+        """
+        gets the email subject.
+
+        :rtype: str
+        """
+
         return self._email['subject']
+
+    @property
+    def body_type(self):
+        """
+        gets the email body type.
+
+        :rtype: str
+        """
+
+        return self._email['body_type']

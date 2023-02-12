@@ -34,7 +34,7 @@ SERVERS = {
     'ymail.com': _YAHOO
 }
 
-# separator between email and name or password in senders and targets files:
+# separator between different parts of senders and targets in corresponding files:
 
 SEP = '[***]'
 

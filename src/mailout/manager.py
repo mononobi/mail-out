@@ -12,7 +12,17 @@ from mailout.settings import SERVERS, SLEEP
 
 
 class Manager:
+    """
+    manager class.
+
+    it handles the whole process of sending emails to targets.
+    """
+
     def __init__(self):
+        """
+        initializes an instance of `Manager`.
+        """
+
         print('*' * 200)
         print('Processing data...')
         self._mail_extractor = MailExtractor()
@@ -21,20 +31,38 @@ class Manager:
         self._sent_extractor = SentExtractor()
 
     def _get_client(self, server_name):
+        """
+        gets a client to communicate with given email server.
+
+        :param srt server_name: email server name from settings.
+
+        :rtype: Client
+        """
+
         server = SERVERS.get(server_name.lower())
         if not server:
-            raise Exception(f'Server [{server_name}] does not have any '
-                            f'configurations in settings.')
+            raise ValueError(f'Server [{server_name}] does not have any '
+                             f'configurations in settings.')
 
         return Client(server['host'], server['port'])
 
     def _confirm(self):
-        message = self._mail_extractor.message.format(name='TARGET NAME')
+        """
+        performs interactive confirmation for sending emails.
+        """
+
+        message = self._mail_extractor.message.format(target_name='TARGET NAME',
+                                                      sender_name='SENDER NAME')
+        subject = self._mail_extractor.subject.format(target_name='TARGET NAME',
+                                                      sender_name='SENDER NAME')
+
         print('*' * 200)
         print('You are going to send emails, please confirm these information:')
         print('*' * 100)
+        print('Email Body Type:')
+        print(self._mail_extractor.body_type)
         print('Email Subject:')
-        print(self._mail_extractor.subject)
+        print(subject)
         print('*' * 100)
         print('Email Message:')
         print(message)
@@ -58,6 +86,15 @@ class Manager:
         exit(0)
 
     def _renew(self, sender, current_client=None):
+        """
+        renews the connection to the email server for the given sender.
+
+        :param dict sender: a dict containing sender info.
+        :param Client current_client: current client in use, if available.
+
+        :rtype: Client
+        """
+
         if current_client:
             current_client.terminate()
 
@@ -66,6 +103,10 @@ class Manager:
         return client
 
     def perform(self):
+        """
+        performs the email sending operation.
+        """
+
         self._confirm()
         success_sent = 0
         failed_sent = 0
@@ -87,8 +128,12 @@ class Manager:
 
                         print(f'Sending to target '
                               f'[{target_index + 1}]-[{target["name"]}]-[{target["email"]}]')
-                        message = self._mail_extractor.message.format(name=target['name'])
-                        client.send(target['email'], self._mail_extractor.subject, message)
+                        message = self._mail_extractor.message.format(target_name=target['name'],
+                                                                      sender_name=sender['name'])
+                        subject = self._mail_extractor.subject.format(target_name=target['name'],
+                                                                      sender_name=sender['name'])
+                        client.send(target['email'], subject, message,
+                                    self._mail_extractor.body_type, sender['name'])
                         success_sent += 1
                         self._sent_extractor.add_sent(sender['email'], target['email'])
                         sleep(SLEEP)
