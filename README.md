@@ -16,10 +16,10 @@ A simple command line client for sending emails using different email providers.
 # data
 You should first fill these three files with real data and then run the app:
 - **files/mail.txt**: Contains the body type, subject and body of the email to be sent. 
-  it could have `{target_name}` and/or `{sender_name}` placeholders to be replaced by 
+  It could have `{target_name}` and/or `{sender_name}` placeholders to be replaced by 
   each target and sender name at runtime.
 
-  the body type is the first line of the file and could be either `<<-text->>` or `<<-html->>`.
+  The body type is the first line of the file and could be either `<<-text->>` or `<<-html->>`.
 - **files/senders.txt**: Contains the email address, password and optional sender name of each 
   email to be used as source address. If more than one sender is provided, the email would be 
   sent from each sender to all targets.
@@ -27,7 +27,7 @@ You should first fill these three files with real data and then run the app:
   `{sender_name}` placeholder. 
 
   Note that if you don't want to provide `sender_name` in this file, you shouldn't also 
-  add `{sender_name}` placeholder in `mail.txt` file. otherwise an error would be raised.
+  add `{sender_name}` placeholder in `mail.txt` file, otherwise an error would be raised.
 - **files/targets.txt**: Contains the email address and name of each target to send email to it.
   the provided target name would be replaced in email subject and message if there is a 
   `{target_name}` placeholder.
