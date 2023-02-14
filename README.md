@@ -49,8 +49,10 @@ python3 run.py
 If your email account has two-step verification enabled, you should create an app password
 for your account and use that app password in `senders.txt` file instead of your account's 
 main password.
-Here are the links for Google and Microsoft accounts app password guide, any other email 
+
+Here are the links for Google, Microsoft and Yahoo accounts app password guide, any other email 
 provider would also have something similar to app passwords:
 
-- [Google App Passwords](https://support.google.com/accounts/answer/185833?hl=en)
-- [Microsoft App Passwords](https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944)
+- [Google App Password](https://support.google.com/accounts/answer/185833?hl=en)
+- [Microsoft App Password](https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944)
+- [Yahoo App Password](https://help.yahoo.com/kb/SLN15241.html)
