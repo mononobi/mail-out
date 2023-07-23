@@ -26,8 +26,8 @@ You should first fill these three files with real data and then run the app:
   The provided sender name would be replaced in email subject and message if there is a
   `{sender_name}` placeholder. 
 
-  Note that if you don't want to provide `sender_name` in this file, you shouldn't also 
-  add `{sender_name}` placeholder in `mail.txt` file, otherwise an error would be raised.
+  Note that if you don't want to provide `sender_name` in this file, you shouldn't add
+  `{sender_name}` placeholder in `mail.txt` file, otherwise an error would be raised.
 - **files/targets.txt**: Contains the email address and name of each target to send email to it.
   the provided target name would be replaced in email subject and message if there is a 
   `{target_name}` placeholder.
